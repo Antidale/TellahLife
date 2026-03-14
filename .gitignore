@@ -1,0 +1,10 @@
+.DS_Store
+.vscode
+bin
+obj
+obj/*
+bin/*
+.vs
+*/*.csproj.user.idea
+.idea
+*.sln.DotSettings.user

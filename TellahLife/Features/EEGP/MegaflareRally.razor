@@ -1,0 +1,70 @@
+﻿@inherits FlagsetBase
+
+<PageTitle>Meganuke Rally</PageTitle>
+<div class="grid mt-5">
+    <section>
+        <h2 class="h3">Do All</h2>
+        <div class="button-row">
+            <Objective DisplayText="Value" />
+            <Objective DisplayText="Masa" />
+            <Objective DisplayText="Ribbon" />
+        </div>
+    </section>
+    <section>
+        <h2 class="h3">Do Four
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    onclick="document.getElementById('obj-dialog').showModal()" />
+
+        </h2>
+        <ObjectiveList ObjectivesList="@questObjectives" />
+    </section>
+    <section>
+        <h2 class="h3">XP Bosses
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    onclick="document.getElementById('boss-dialog').showModal()"></button>
+        </h2>
+        <div class="button-row flex-wrap">
+            <ObjectiveList ObjectivesList="@bossObjectives" />
+        </div>
+    </section>
+    <section class="full-span">
+        <h2 class="h3">
+            Notes
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    @onclick="() => ShowModalById(noteDialogId)" />
+            <button class="btn btn-info btn-plus btn-sm nf oi nf-fa-edit mb-2 pb-1"
+                    @onclick="() => ShowModalById(editId)" />
+        </h2>
+        <ObjectiveList ObjectivesList="@PersonalNotes" />
+    </section>
+</div>
+
+<Dialog ModalId="obj-dialog" OnObjectiveUpdated="HandleItemAdded" />
+<Dialog ModalId="boss-dialog" OnObjectiveUpdated="HandleItemAdded" />
+<Dialog ModalId="@noteDialogId" OnObjectiveUpdated="HandleItemAdded" />
+<EditDialog ModalId="@editId" Notes="PersonalNotes" OnListUpdated="HandleItemRemoved" />
+
+@code {
+
+    private List<string> questObjectives = ["Rat Trade"];
+    private List<string> bossObjectives = ["Bahamut", "Wyvern"];
+
+    public async Task HandleItemAdded(KeyValuePair<string, string> args)
+    {
+        switch (args.Key)
+        {
+            case "obj-dialog":
+                questObjectives.Add(args.Value);
+                break;
+            case "boss-dialog":
+                bossObjectives.Add(args.Value);
+                break;
+            case "note-dialog":
+                PersonalNotes.Add(args.Value);
+                break;
+        }
+
+        await SaveDataAsync();
+    }
+
+}

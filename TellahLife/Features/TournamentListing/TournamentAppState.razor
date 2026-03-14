@@ -1,0 +1,69 @@
+﻿@using FeInfo.Common.DTOs
+@using TellahLife.Services
+@inherits AppStateBase
+@inject IFeApiDataService dataService
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private List<TournamentSummary> tournaments = new();
+    public List<TournamentSummary> Tournaments
+    {
+        get => tournaments;
+        set
+        {
+            tournaments = value;
+            NotifyPropertyChanged(new(nameof(Tournaments), value));
+            StateHasChanged();
+        }
+    }
+
+    private Dictionary<int, IQueryable<TournamentRegistrant>> tournamentRegistrants = new();
+    public Dictionary<int, IQueryable<TournamentRegistrant>> TournamentRegistrants { get => tournamentRegistrants; }
+
+    public async Task FetchTournaments()
+    {
+        try
+        {
+            if (dataService is null)
+            {
+                throw new Exception("what the heck");
+            }
+            Tournaments = await dataService.GetTournamentsAsync();
+        }
+        catch (Exception ex)
+        {
+            var stuff = ex;
+            //no-op, eventually maybe add a toast or something?
+        }
+    }
+
+    public async Task<IQueryable<TournamentRegistrant>> GetTournamentRegistrants(int id)
+    {
+        if (tournamentRegistrants.TryGetValue(id, out var registrants) && registrants is not null && registrants.Any())
+        {
+            return registrants;
+        }
+
+        try
+        {
+            registrants = (await dataService.GetTournamentRegistrantsAsync(id)).AsQueryable();
+
+            tournamentRegistrants.TryAdd(id, registrants);
+        }
+        catch (Exception)
+        {
+            //no-op, eventually maybe add a toast or something?
+        }
+
+        return registrants ?? new List<TournamentRegistrant>().AsQueryable();
+    }
+    //TODO: Continue working at changing this over to an injectible service rather than the Cascading parameter version.
+    //TODO: Pending how well that works with seed search
+
+}

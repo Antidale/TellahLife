@@ -1,0 +1,28 @@
+﻿@if (Parent?.ActiveTab == this)
+{
+  @ChildContent
+}
+
+@code {
+    [CascadingParameter]
+    private TabControl? Parent { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        if(Parent is null)
+        {
+            throw new ArgumentNullException(nameof(Parent), "TabBody should not exist outside of a TabControl");
+        }
+
+        Parent.AddTab(this);
+
+        base.OnInitialized();
+    }
+}

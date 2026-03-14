@@ -1,0 +1,84 @@
+﻿@inherits FlagsetBase
+
+<PageTitle>Tsunami Open</PageTitle>
+<div class="grid mt-5">
+    <section>
+        <h2 class="h5">Do One</h2>
+        <div class="button-row">
+            <Objective DisplayText="Rat" />
+            <Objective DisplayText="Pink" />
+        </div>
+    </section>
+    <section>
+        <h2 class="h5">Do One</h2>
+        <div class="button-row">
+            <Objective DisplayText="King" />
+            <Objective DisplayText="Queen" />
+        </div>
+    </section>
+    <section>
+        <h2 class="h5">Do One Row</h2>
+        <div class="button-row">
+            <Objective DisplayText="Magma" />
+            <Objective DisplayText="Pass" />
+            <Objective DisplayText="12 KI" />
+        </div>
+        <div class="button-row">
+            <Objective DisplayText="Giant" />
+            <Objective DisplayText="20 Bosses" />
+        </div>
+    </section>
+    <section>
+        <h2 class="h5">Do All</h2>
+        <div class="button-row">
+            <Objective DisplayText="Forge" />
+        </div>
+    </section>
+    <section>
+        <h2 class="h5">@bossesFought Bosses Fought</h2>
+        <div class="button-row">
+            <button class="btn btn-primary nf oi nf-fa-arrow_up" @onclick="Increment"></button>
+            <button class="btn btn-outline-danger nf oi nf-fa-arrow_down" @onclick="Decrement"></button>
+        </div>
+    </section>
+    <section class="full-span">
+        <h2 class="h3">
+            Notes
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    @onclick="() => ShowModalById(noteDialogId)" />
+            <button class="btn btn-info btn-plus btn-sm nf oi nf-fa-edit mb-2 pb-1"
+                    @onclick="() => ShowModalById(editId)" />
+        </h2>
+        <ObjectiveList ObjectivesList="@PersonalNotes" />
+    </section>
+</div>
+
+<Dialog ModalId="@noteDialogId" OnObjectiveUpdated="HandleItemAdded" />
+<EditDialog ModalId="@editId" Notes="PersonalNotes" OnListUpdated="HandleItemRemoved" />
+
+@code {
+    private int bossesFought = 0;
+
+    private void Increment()
+    {
+        bossesFought += 1;
+    }
+
+    private void Decrement()
+    {
+        if (bossesFought > 0)
+            bossesFought -= 1;
+    }
+
+    public async Task HandleItemAdded(KeyValuePair<string, string> args)
+    {
+        switch (args.Key)
+        {
+            case "note-dialog":
+                PersonalNotes.Add(args.Value);
+                break;
+        }
+
+        await SaveDataAsync();
+    }
+}

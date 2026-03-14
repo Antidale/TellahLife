@@ -1,0 +1,48 @@
+﻿<dialog id="edit-note-dialog" @onclose="OnClose" @oncancel="OnCancel" closedby="any">
+    <form method="dialog">
+        @if (Notes.Count > 0)
+        {
+            <h3 class="h5">Click Trash to remove note</h3>
+            <div class="grid">
+                @foreach (var note in Notes)
+                {
+                    <p class="my-2">@note</p>
+                    <button class="btn btn-danger btn-sm nf oi nf-cod-trash mx-4 my-2" @onclick="() => RemoveNote(note)"
+                            @onclick:preventDefault="true" />
+                }
+            </div>
+            <button class="btn btn-small btn-outline-primary mt-5">Close</button>
+        }
+        else
+        {
+            <p>No notes to remove</p>
+            <button class="btn btn-small btn-outline-primary">Close</button>
+        }
+    </form>
+</dialog>
+
+@code {
+    [Parameter]
+    public required string ModalId { get; set; }
+
+    [Parameter]
+    public EventCallback<List<string>> OnListUpdated { get; set; }
+
+    [Parameter]
+    public required List<string> Notes { get; set; }
+
+    private async Task OnClose()
+    {
+        await OnListUpdated.InvokeAsync(Notes);
+    }
+
+    private void OnCancel()
+    {
+
+    }
+
+    private void RemoveNote(string note)
+    {
+        Notes.Remove(note);
+    }
+}

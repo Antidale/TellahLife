@@ -1,0 +1,35 @@
+﻿@using Enums = TellahLife.Enums
+
+<button @onclick="() => UpdateComponent(Points)"
+        class="@strikeThrough @buttonStyle btn mx-1 fw-bold text-wrap">@DisplayText</button>
+
+@code {
+    [Parameter]
+    public string DisplayText { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<int> OnObjectiveUpdated { get; set; }
+
+    [Parameter]
+    public int Points { get; set; } = 0;
+
+    private bool IsClicked = false;
+    private string buttonStyle = "btn-primary";
+    private string strikeThrough = "";
+
+    private void UpdateComponent(int points = 0)
+    {
+        IsClicked = !IsClicked;
+        buttonStyle = SetButtonStyle();
+        strikeThrough = SetStrikeThrough();
+        StateHasChanged();
+        if (points != 0)
+        {
+            points = IsClicked ? points : -points;
+            OnObjectiveUpdated.InvokeAsync(points);
+        }
+    }
+
+    private string SetStrikeThrough() => IsClicked ? "text-decoration-line-through" : string.Empty;
+    private string SetButtonStyle() => IsClicked ? "btn-secondary" : "btn-primary";
+}

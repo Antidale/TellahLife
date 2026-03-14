@@ -1,0 +1,2 @@
+# Tellah Life
+This a helper site for some various bits of information and whatnot with [Free Enterpise](https://ff4fe.com/). Originally this project started as a helper for playing a manual Countdown variant of SMZ3 (both single player and multiworlds). That original repository is [here](https://github.com/Antidale/smz3.countdown.wasm)

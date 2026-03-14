@@ -1,0 +1,37 @@
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JSRuntime
+
+
+@code {
+    public string StorageKey => GetType().ToString().Split('.').Last();
+    public List<string> PersonalNotes { get; set; } = new();
+    public const string noteDialogId = "note-dialog";
+    public const string editId = "edit-note-dialog";
+
+    protected override async Task OnInitializedAsync()
+    {
+        PersonalNotes = await localStorage.GetItemAsync<List<string>>(StorageKey) ?? PersonalNotes;
+        await base.OnInitializedAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+
+    }
+
+    public async Task SaveDataAsync()
+    {
+        await localStorage.SetItemAsync<List<string>>(StorageKey, PersonalNotes);
+    }
+
+    public async Task ShowModalById(string id)
+    {
+        await JSRuntime.InvokeVoidAsync("modals.show", id);
+    }
+
+    public async Task HandleItemRemoved(List<string> args)
+    {
+        PersonalNotes = args;
+        await SaveDataAsync();
+    }
+}

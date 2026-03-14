@@ -1,0 +1,81 @@
+﻿@page "/tournaments/{id:int}"
+@using FeInfo.Common.DTOs
+@using TellahLife.Extenstions
+@inject HttpClient Http
+
+
+<h1 class="h3">@tournamentSummary.TournamentName</h1>
+<h2 class="h5">@tournamentSummary.GuildName</h2>
+<p>@tournamentSummary.EntrantCount Entrants</P>
+<div class="button-row">
+    @if (@tournamentSummary.HasRulesLink())
+    {
+        <a class="" href="@tournamentSummary.RulesLink">Rules Doc</a>
+    }
+
+    @if (@tournamentSummary.HasStandingsLink())
+    {
+        <a class="" href="@tournamentSummary.StandingsLink">Standings</a>
+    }
+</div>
+<details>
+    <summary>
+        @tournamentSummary.RegistrationStatus()
+    </summary>
+    <p>Registration Start: @tournamentSummary.RegistrationStart.ToLocalString()</p>
+    <p>Registration End: @tournamentSummary.RegistrationEnd.ToLocalString()</p>
+</details>
+
+<div class="detail-container">
+    @if (Entrants is null || Entrants.All(e => string.IsNullOrWhiteSpace(e.DiscordName)))
+    {
+        <h4>No Entrants</h4>
+    }
+    else
+    {
+        <QuickGrid Items="Entrants" Class="table table-striped">
+            <PropertyColumn Property="@(r => r.DiscordName)" Title="Discord Name" Sortable="true" />
+            <PropertyColumn Property="@(r => r.TwitchName)" Title="Twitch Name" Sortable="true" />
+            <PropertyColumn Property="@(r => r.Pronouns)" Sortable="true" />
+            <PropertyColumn Property="@(r => r.DisplayName)" Title="Display Name" Sortable="true" />
+            <TemplateColumn Title="Registration Date" SortBy="@sortByRegistrationDate" IsDefaultSortColumn="true"
+                            InitialSortDirection="SortDirection.Descending" Sortable="true">@context.RegistrationDateLocal()
+            </TemplateColumn>
+        </QuickGrid>
+
+        @if (Entrants is not null && Entrants.Count() > 16)
+        {
+            <Paginator State="@pagination" />
+        }
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    public TournamentAppState AppState { get; set; } = new();
+
+    [Parameter]
+    public int id { get; set; }
+
+    PaginationState pagination = new PaginationState { ItemsPerPage = 16 };
+
+    private TournamentSummary tournamentSummary = new();
+
+    private IQueryable<TournamentRegistrant>? Entrants = new List<TournamentRegistrant>().AsQueryable();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Entrants = await AppState.GetTournamentRegistrants(id);
+
+        tournamentSummary = AppState.Tournaments.FirstOrDefault(x => x.TournamentId == id) ?? tournamentSummary;
+        if (tournamentSummary.TournamentId == 0)
+        {
+            await AppState.FetchTournaments();
+            tournamentSummary = AppState.Tournaments.FirstOrDefault(x => x.TournamentId == id) ?? tournamentSummary;
+        }
+
+    }
+
+    GridSort<TournamentRegistrant> sortByRegistrationDate = GridSort<TournamentRegistrant>.ByDescending(r =>
+r.RegistrationDate.Ticks);
+}

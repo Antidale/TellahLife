@@ -1,0 +1,21 @@
+﻿@using TellahLife.Models
+
+<fieldset class="col-lg-6 col-md-12">
+    <input id="@CheckboxModel.Name" type="checkbox" class="form-check-input" @bind="CheckboxModel.IsChecked" />
+    <label for="@CheckboxModel.Name" class="form-check-label">&nbsp;@CheckboxModel.Name</label>
+</fieldset>
+
+
+@code {
+
+    [Parameter]
+    public CheckboxModel CheckboxModel { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<CheckboxModel> CheckboxModelChanged { get; set; }
+
+    async Task UpdateCheckboxModel()
+    {
+        await CheckboxModelChanged.InvokeAsync(CheckboxModel);
+    }
+}

@@ -1,0 +1,43 @@
+﻿<div>
+    @foreach (var tab in Tabs)
+    {
+        <button type="button" class="btn @GetButtonClass(tab)"
+            @onclick=@(() => ActivateTab(tab))>
+            @tab.Title
+        </button>
+    }
+</div>
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+
+    public TabBody? ActiveTab { get; set; }
+    List<TabBody> Tabs = [];
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    internal void AddTab(TabBody tab)
+    {
+        Tabs.Add(tab);
+        if (Tabs.Count == 1)
+        {
+            ActiveTab = tab;
+        }
+
+        StateHasChanged();
+    }
+
+    string GetButtonClass(TabBody tab)
+    {
+        return tab == ActiveTab ? "btn-primary" : "";
+    }
+
+    void ActivateTab(TabBody tab)
+    {
+        ActiveTab = tab;
+    }
+}

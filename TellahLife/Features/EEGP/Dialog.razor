@@ -1,0 +1,36 @@
+﻿<dialog id="@ModalId" @onclose="OnClose" @oncancel="OnCancel" closedby="any">
+    <form method="dialog">
+        <input type="text" @bind="data" @bind:event="oninput" placeholder="Objective description" />
+        <div class="button-row mt-2">
+            <button class="btn btn-small btn-success">save</button>
+            <button class="btn btn-small btn-outline-danger">cancel</button>
+        </div>
+    </form>
+</dialog>
+
+@code {
+    [Parameter]
+    public required string ModalId { get; set; }
+
+    [Parameter]
+    public EventCallback<KeyValuePair<string, string>> OnObjectiveUpdated { get; set; }
+
+    private string data = string.Empty;
+
+    private void OnClose()
+    {
+        if (string.IsNullOrWhiteSpace(data))
+        {
+            return;
+        }
+
+        OnObjectiveUpdated.InvokeAsync(new KeyValuePair<string, string>(ModalId, data));
+        data = string.Empty;
+    }
+
+    private void OnCancel()
+    {
+        data = string.Empty;
+    }
+
+}

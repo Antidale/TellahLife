@@ -1,0 +1,104 @@
+﻿@inherits FlagsetBase
+
+<PageTitle>Zantetsuken Circuit</PageTitle>
+<div class="grid mt-5">
+    <section>
+        <h2 class="h3">3 Points
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    @onclick="() => ShowModalById(threePointId)" />
+
+        </h2>
+        <div class="button-row flex-wrap">
+            @foreach (var obj in threePointObjs)
+            {
+                <Objective DisplayText="@obj" Points="3" OnObjectiveUpdated="HandleObjectiveCompleted" />
+            }
+        </div>
+    </section>
+    <section>
+        <h2 class="h3">5 Points
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    @onclick="() => ShowModalById(fivePointId)" />
+
+        </h2>
+        <div class="button-row flex-wrap">
+            @foreach (var obj in fivePointObjs)
+            {
+                <Objective DisplayText="@obj" Points="5" OnObjectiveUpdated="HandleObjectiveCompleted" />
+            }
+        </div>
+    </section>
+    <section>
+        <h2 class="h3">7 Points
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    @onclick="() => ShowModalById(sevenPointId)" />
+
+        </h2>
+        <div class="button-row flex-wrap">
+            @foreach (var obj in sevenPointObjs)
+            {
+                <Objective DisplayText="@obj" Points="7" OnObjectiveUpdated="HandleObjectiveCompleted" />
+            }
+        </div>
+    </section>
+    <section>
+        <h2 class="h3">10 Points</h2>
+        <Objective DisplayText="Giant" Points="10" OnObjectiveUpdated="HandleObjectiveCompleted" />
+    </section>
+    <section>
+        <h2 class="h1">Dark Matter: @DarkMatter </h2>
+    </section>
+    <section class="full-span">
+        <h2 class="h3">
+            Notes
+            <button class="btn btn-success btn-plus btn-sm nf oi nf-fa-plus mb-2 pb-1"
+                    @onclick="() => ShowModalById(noteDialogId)" />
+            <button class="btn btn-info btn-plus btn-sm nf oi nf-fa-edit mb-2 pb-1"
+                    @onclick="() => ShowModalById(editId)" />
+        </h2>
+        <ObjectiveList ObjectivesList="@PersonalNotes" />
+    </section>
+</div>
+
+<Dialog ModalId="@threePointId" OnObjectiveUpdated="HandleItemAdded" />
+<Dialog ModalId="@fivePointId" OnObjectiveUpdated="HandleItemAdded" />
+<Dialog ModalId="@sevenPointId" OnObjectiveUpdated="HandleItemAdded" />
+<Dialog ModalId="@noteDialogId" OnObjectiveUpdated="HandleItemAdded" />
+<EditDialog ModalId="@editId" Notes="PersonalNotes" OnListUpdated="HandleItemRemoved" />
+
+@code {
+    private int DarkMatter = 0;
+    private List<string> threePointObjs = ["Odin", "Golbez"];
+    private List<string> fivePointObjs = ["Forge", "Trade Pink", "Odin Spot"];
+    private List<string> sevenPointObjs = ["Falcon Launch", "Mura Altar"];
+    const string threePointId = "three-point-dialog";
+    const string fivePointId = "five-point-dialog";
+    const string sevenPointId = "seven-point-dialog";
+
+    public void HandleObjectiveCompleted(int points)
+    {
+        DarkMatter += points;
+    }
+
+    public async Task HandleItemAdded(KeyValuePair<string, string> data)
+    {
+        switch (data.Key)
+        {
+            case threePointId:
+                threePointObjs.Add(data.Value);
+                break;
+            case fivePointId:
+                fivePointObjs.Add(data.Value);
+                break;
+            case sevenPointId:
+                sevenPointObjs.Add(data.Value);
+                break;
+            case noteDialogId:
+                PersonalNotes.Add(data.Value);
+                break;
+        }
+
+        await SaveDataAsync();
+    }
+
+}

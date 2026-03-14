@@ -1,0 +1,34 @@
+﻿<div class="tournament-summary border border-2 rounded shadow-sm">
+    <h2>@Tournament.TournamentName</h2>
+    <h4>@Tournament.GuildName</h4>
+    <p>@Tournament.EntrantCount Entrants </p>
+    
+    <p>@Tournament.RegistrationStatus()</p>
+
+    @if(Tournament.HasOpenedRegistration() || Tournament.HasRulesLink())
+    {
+        <p>
+            <div class="button-row">
+                @if(Tournament.HasOpenedRegistration())
+                {
+                    <a class="btn btn-primary" href="/tournaments/@Tournament.TournamentId">Entrants</a>
+                }
+                
+                @if(Tournament.HasRulesLink())
+                {
+                    <a class="btn btn-info" href="@Tournament.RulesLink">Rules Doc</a>
+                }
+
+                @if(Tournament.HasStandingsLink())
+                {
+                    <a class="btn btn-success" href="@Tournament.StandingsLink">Standings</a>
+                }
+            </div>
+        </p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public TournamentSummary Tournament { get; set; } = new();
+}

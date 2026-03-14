@@ -1,0 +1,444 @@
+﻿@page "/poison"
+@using TellahLife.Enums;
+
+@inject IJSRuntime JSRuntime
+
+<PageTitle>PYP Helper</PageTitle>
+
+<h3>Pick Your Poison Helper</h3>
+<br />
+
+<label for="baseFlagset" class="form-label">Base Flagset</label>
+<textarea rows="2" id="baseFlagset" disabled class="form-control" style="resize: none">@baseFlagset</textarea>
+<br />
+
+<label for="currentFlagset" class="form-label">Current Flagset</label>
+<div class="input-group">
+    <textarea disabled rows="2" id="currentFlagset" class="form-control" style="resize: none"
+              aria-describedby="copy-button">@currentFlagset</textarea>
+    <button type="button" id="copy-button" class="btn btn-primary" @onclick="CopyTextToClipboard">Copy</button>
+</div>
+
+<br />
+<h5>Category Selection</h5>
+
+<form>
+    <div class="row">
+        <div class="mb-4 col-md-6">
+            <label for="objectives-dropdown" class="form-label">Objectives</label>
+            <select id="objectives-dropdown" class="form-select" @onchange="ObjectivesChanged">
+                <option value="" disabled selected> -- Select -- </option>
+                <option value="Orandom:6/req:all/win:game">Swap win:crystal to win:game</option>
+                <option value="Orandom:6,boss/req:all/win:crystal">Force objectives to be boss hunts</option>
+                <option value="O1:quest_masamunealtar/2:quest_giant/random:4/req:all/win:crystal">Force quest_masamune
+                    and quest_giant, reduce random count by 2</option>
+                    <option value="O1:quest_monsterqueen/2:quest_sealedcave/random:4/req:all/win:crystal">Force
+                        quest_monsterqueen and quest_sealedcave, reduce random count by 2</option>
+                        <option value="Orandom:6/req:all/win:crystal">Lock Orandom:6/req:all/win:crystal</option>
+                    </select>
+                </div>
+
+                <div class="mb-4 col-md-6">
+                    <label for="ki-dropdown" class="form-label">Key Items</label>
+                    <select id="ki-dropdown" class="form-select" @onchange="KeyItemsChanged">
+                        <option value="" disabled selected> -- Select -- </option>
+                        <option value="Kmain/summon/moon/trap/nofree">Add Monster Chests</option>
+                        <option value="Kmain/summon/moon/nofree/force:hook">Add force:hook</option>
+                        <option value="Kmain/summon/moon/nofree">Lock Kmain/summon/moon/nofree</option>
+                    </select>
+                </div>
+
+                <div class="mb-4 col-md-6">
+                    <label for="characters-dropdown" class="form-label">Characters</label>
+                    <select id="characters-dropdown" class="form-select" @onchange="CharactersChanged">
+                        <option value="" disabled selected> -- Select -- </option>
+                        <option value="Cstandard/nofree/j:abilities/nekkie/only:rydia,tellah,edward,yang,porom,cid">Reject%:
+                            Only:rydia,tellah,edward,yang,porom,cid</option>
+                            <option value="Cstandard/nofree/j:abilities/nekkie/party:4">Apply Party:4</option>
+                            <option value="Cstandard/nofree/j:abilities/nekkie/party:3">Apply Party:3</option>
+                            <option value="Cstandard/nofree/j:abilities/nekkie/permajoin/bye">Apply Permajoin AND Bye</option>
+                            <option value="Cstandard/nofree/j:abilities/nekkie/permajoin">Apply Permajoin</option>
+                            <option value="Cstandard/nofree/j:abilities/nekkie/bye">Apply Bye</option>
+                            <option value="Cstandard/nofree/j:abilities/nekkie">Lock Cstandard/nofree/j:abilities/nekkie</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 col-md-3">
+                        <label for="treasure-dropdown" class="form-label">Treasures</label>
+                        <select id="treasure-dropdown" class="form-select" @onchange="TreasureChanged">
+                            <option value="" disabled selected> -- Select -- </option>
+                            <option value="Tshuffle">Swap Tstandard to Tshuffle</option>
+                            <option value="Tpro">Swap Tstandard to Tpro</option>
+                            <option value="Tstandard/no:j">Remove J items</option>
+                            <option value="Tempty">Swap Tstandard to Tempty</option>
+                            <option value="Tstandard/sparse:{}">Add Sparse option</option>
+                            <option value="Tstandard/money">Apply Tmoney</option>
+                            <option value="Tstandard">Lock Tstandard</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 col-md-1" style="margin-top: 40px">
+                        <input id="junk-checkbox" type="checkbox" class="form-check-input" disabled="@junkCheckboxDisabled"
+                               @onchange="JunkChanged" />
+                        <label for="junk-checkbox" class="form-check-label">Tjunk</label>
+                    </div>
+
+                    <div class="mb-4 col-md-2">
+                        <label for="sparse-dropdown" class="form-label">TSparse</label>
+                        <select id="sparse-dropdown" class="form-select" @onchange="SparseChanged" disabled="@sparseDisabled">
+                            <option value="" disabled selected> -- Select -- </option>
+                            <option value="90">Only 90% of chests are filled</option>
+                            <option value="80">Only 80% of chests are filled</option>
+                            <option value="70">Only 70% of chests are filled</option>
+                            <option value="60">Only 60% of chests are filled</option>
+                            <option value="50">Only 50% of chests are filled</option>
+                            <option value="40">Only 40% of chests are filled</option>
+                            <option value="30">Only 30% of chests are filled</option>
+                            <option value="20">Only 20% of chests are filled</option>
+                            <option value="10">Only 10% of chests are filled</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 col-md-6">
+                        <label for="shop-dropdown" class="form-label">Shops</label>
+                        <select id="shop-dropdown" class="form-select" @onchange="ShopsChanged">
+                            <option value="" disabled selected> -- Select -- </option>
+                            <option value="Spro">Swap Sstandard to Spro</option>
+                            <option value="Scabins">Swap Sstandard to Scabins</option>
+                            <option value="Sempty">Swap Sstandard to Sempty</option>
+                            <option value="Sstandard/sell:0">Add Sell:0</option>
+                            <option value="Sstandard/no:j">Remove J items</option>
+                            <option value="Sstandard/no:sirens">Add no:sirens</option>
+
+                            <option value="Sstandard">Lock Sstandard</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 col-md-6">
+                        <label for="boss-dropdown" class="form-label">Bosses</label>
+                        <select id="boss-dropdown" @onchange="BossesChanged" class="form-select">
+                            <option value="" disabled selected> -- Select -- </option>
+                            <option value="Bstandard/unsafe/alt:gauntlet">Add Bunsafe</option>
+                            <option value="Bstandard/nofree/alt:gauntlet">Add Bnofree</option>
+                            <option value="Bstandard/alt:gauntlet">Lock Bstandard/alt:gauntlet</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 col-md-6">
+                        <label for="encounters-dropdown" class="form-label">Encounters</label>
+                        <select id="encounters-dropdown" class="form-select" @onchange="EncountersChanged">
+                            <option value="" disabled selected> -- Select -- </option>
+                            <option value="Ereduce">Swap Etoggle to Ereduce</option>
+                            <option value="Enoencounters">Swap Etoggle to Enoencounters</option>
+                            <option value="Etoggle/danger">Apply Edanger</option>
+                            <option value="Etoggle/no:sirens">Apply Eno:sirens</option>
+                            <option value="Etoggle/no:jdrops">Apply Eno:jdrops</option>
+                            <option value="Etoggle/noexp">Apply Enoexp</option>
+                            <option value="Etoggle">Lock Etoggle</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 col-md-6">
+                        <label for="kit-dropdown" class="form-label">Starting Kits</label>
+                        <select id="kit-dropdown" @onchange="KitChanged" class="form-select">
+                            <option value="" disabled selected> -- Select -- </option>
+                            <option value="-kit:none">No Kits</option>
+                            <option value="-kit:freedom">Lock -kit:freedom</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 col-md-6">
+                        <label for="glitch-dropdown" class="form-label">Glitches</label>
+                        <select id="glitch-dropdown" @onchange="GlitchChanged" class="form-select">
+                            <option value="" disabled selected> -- Select -- </option>
+                            <option value="Gnone">No Glitches</option>
+                            <option value="Glife/sylph/backrow">Lock Glife/sylph/backrow</option>
+                        </select>
+                    </div>
+                </div>
+                <fieldset>
+                    <p>Agility</p>
+                    <div class="row">
+                        <div class="mb-4 col-md-3">
+                            <input id="chero-checkbox" type="checkbox" class="form-check-input" value="@hero"
+                                   @onchange="(ChangeEventArgs e) => AgilityChanged(e, AgiEnum.Hero)"
+                                   disabled="@agilityCheckboxDisabled" />
+                            <label for="chero-checkbox" class="form-check-label">Apply Chero</label>
+                        </div>
+
+                        <div class="mb-4 col-md-3">
+                            <input id="vanAgi-checkbox" type="checkbox" class="form-check-input" value="@vanillaAgility"
+                                   @onchange="(ChangeEventArgs e) => AgilityChanged(e, AgiEnum.VanillaAgility)"
+                                   disabled="@agilityCheckboxDisabled" />
+                            <label for="vanAgi-checkbox" class="form-check-label">Apply -vanilla:agility</label>
+                        </div>
+
+                        <div class="mb-4 col-md-3">
+                            <input id="noCursed-checkbox" type="checkbox" class="form-check-input" value="@noCursed"
+                                   @onchange="(ChangeEventArgs e) => AgilityChanged(e, AgiEnum.NoCursed)"
+                                   disabled="@agilityCheckboxDisabled" />
+                            <label for="noCursed-checkbox" class="form-check-label">Apply -nocursed</label>
+                        </div>
+
+                        <div class="mb-4 col-md-3">
+                            <input id="lockAgility-checkbox" type="checkbox" class="form-check-input" value="@lockAgility"
+                                   @onchange="LockAgilityChanged" disabled="@lockAgilityDisabled" />
+                            <label for="lockAgility-checkbox" class="form-check-label">Lock Agility</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+
+@code {
+    const string objectivesBase = "Orandom:6/req:all/win:crystal";
+    const string charactersBase = "Cstandard/nofree/j:abilities/nekkie";
+    const string treasuresBase = "Tstandard";
+    const string agilityBase = "";
+    const string encountersBase = "Etoggle";
+    const string shopsBase = "Sstandard";
+    const string keyItemsBase = "Kmain/summon/moon/nofree";
+    const string bossesBase = "Bstandard/alt:gauntlet";
+    const string kitsBase = "-kit:freedom";
+    const string glitchesBase = "Glife/sylph/backrow";
+    const string smithAltBase = "-smith:alt";
+    const string noCursedBase = "";
+
+    string objectivesCurrent = objectivesBase;
+    string charactersCurrent = charactersBase;
+    string treasuresCurrent = treasuresBase;
+    string agilityCurrent = agilityBase;
+    string noCursedCurrent = noCursedBase;
+    string encountersCurrent = encountersBase;
+    string shopsCurrent = shopsBase;
+    string keyItemsCurrent = keyItemsBase;
+    string bossesCurrent = bossesBase;
+    string kitsCurrent = kitsBase;
+    string glitchesCurrent = glitchesBase;
+    string smithAltCurrent = smithAltBase;
+
+    bool vanillaAgility = false;
+    bool hero = false;
+    bool noCursed = false;
+    bool lockAgility = false;
+    bool sparseDisabled = true;
+    bool junkEnabled = false;
+    bool junkCheckboxDisabled = false;
+    bool agilityCheckboxDisabled = false;
+    bool lockAgilityDisabled = false;
+    string sparseValue = "{}";
+
+    private readonly static string baseFlagset = string.Join(" ", objectivesBase, keyItemsBase, "Pkey", charactersBase,
+treasuresBase, shopsBase, bossesBase, encountersBase, glitchesBase, kitsBase, "-noadamants -smith:alt");
+    private string currentFlagset = baseFlagset;
+
+    private string BuildFlagset()
+    {
+        return string.Join(" ", objectivesCurrent, keyItemsCurrent, "Pkey", charactersCurrent, treasuresCurrent, shopsCurrent,
+        bossesCurrent, encountersCurrent, glitchesCurrent, kitsCurrent, "-noadamants", noCursedCurrent, smithAltCurrent,
+agilityCurrent);
+    }
+
+    private async Task CopyTextToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", currentFlagset);
+    }
+
+    void ResetState()
+    {
+        objectivesCurrent = objectivesBase;
+        charactersCurrent = charactersBase;
+        treasuresCurrent = treasuresBase;
+        agilityCurrent = agilityBase;
+        encountersCurrent = encountersBase;
+        shopsCurrent = shopsBase;
+        keyItemsCurrent = keyItemsBase;
+        bossesCurrent = bossesBase;
+        kitsCurrent = kitsBase;
+        glitchesCurrent = glitchesBase;
+        currentFlagset = baseFlagset;
+    }
+
+    void ObjectivesChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            objectivesCurrent = (string)e.Value;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void KeyItemsChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            keyItemsCurrent = (string)e.Value;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void CharactersChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            var heroSuffix = charactersCurrent.Contains("hero")
+                ? "/hero"
+                : string.Empty;
+            charactersCurrent = (string)e.Value + heroSuffix;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void TreasureChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            treasuresCurrent = (string)e.Value;
+            sparseDisabled = !treasuresCurrent.Contains("sparse");
+
+            if (treasuresCurrent.Contains("money"))
+            {
+                junkCheckboxDisabled = true;
+            }
+            else
+            {
+                if (junkEnabled)
+                {
+                    treasuresCurrent += "/junk";
+                }
+                junkCheckboxDisabled = false;
+            }
+
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void SparseChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            treasuresCurrent = treasuresCurrent.Replace(sparseValue, (string)e.Value);
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void EncountersChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            encountersCurrent = (string)e.Value;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void ShopsChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            shopsCurrent = (string)e.Value;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void BossesChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            var suffix = bossesCurrent.Contains("whyburn")
+                ? "/whyburn"
+                : string.Empty;
+            bossesCurrent = (string)e.Value + suffix;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void KitChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            kitsCurrent = (string)e.Value;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void GlitchChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            glitchesCurrent = (string)e.Value;
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void LockAgilityChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            var newValue = (bool)e.Value;
+            agilityCheckboxDisabled = newValue;
+        }
+    }
+
+    void AgilityChanged(ChangeEventArgs e, AgiEnum choice)
+    {
+        if (e?.Value is not null)
+        {
+            var newValue = (bool)e.Value;
+
+            switch (choice)
+            {
+                case AgiEnum.Hero:
+                    hero = newValue;
+                    charactersCurrent = hero
+                        ? charactersCurrent + "/hero"
+                        : charactersCurrent.Replace("/hero", "");
+
+                    smithAltCurrent = hero
+                        ? string.Empty
+                        : smithAltBase;
+                    break;
+
+                case AgiEnum.NoCursed:
+                    noCursed = newValue;
+                    noCursedCurrent = noCursed
+                        ? "-nocursed"
+                        : agilityBase.Replace("-nocursed ", "");
+                    break;
+
+                case AgiEnum.VanillaAgility:
+                    vanillaAgility = newValue;
+                    agilityCurrent = vanillaAgility
+                        ? agilityCurrent + "-vanilla:agility"
+                        : string.Empty;
+                    break;
+            }
+
+            if (newValue && !bossesCurrent.Contains("whyburn"))
+            {
+                bossesCurrent += "/whyburn";
+            }
+            else if (!newValue && bossesCurrent.Contains("whyburn"))
+            {
+                bossesCurrent = bossesCurrent.Replace("/whyburn", "");
+            }
+
+            lockAgilityDisabled = noCursed || vanillaAgility || hero;
+
+            currentFlagset = BuildFlagset();
+        }
+    }
+
+    void JunkChanged(ChangeEventArgs e)
+    {
+        if (e?.Value is not null)
+        {
+            var newValue = (bool)e.Value;
+            junkEnabled = newValue;
+            treasuresCurrent = newValue
+                ? treasuresCurrent + "/junk"
+                : treasuresCurrent.Replace("/junk", "");
+
+            currentFlagset = BuildFlagset();
+        }
+    }
+}

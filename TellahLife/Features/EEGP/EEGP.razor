@@ -1,0 +1,34 @@
+﻿@page "/"
+@page "/eegp"
+@using TellahLife.Components
+
+<TabControl>
+    <TabBody Title="Megaflare Rally">
+        <MegaflareRally />
+    </TabBody>
+    <TabBody Title="Tsunami Open">
+        <TsunamiOpen />
+    </TabBody>
+    <TabBody Title="Zantetsuken Circuit">
+        <ZantetsukenCircuit />
+    </TabBody>
+</TabControl>
+
+@code {
+    /* selection of flagset (MR, TO, ZC)
+    for each flagset show
+        //Objectives (whith fliterable selections for them)
+
+        Flag notes
+        go mode indicator?
+
+    for MR show: Kmain/moon/miab:above whichburn crelaxed hero altgauntlet (mostly because this is the sole gauntlet
+available flagset)
+    for TO show: boss counter
+    for ZC show: running dk matter total
+    have user enterable notes, too, per flagset
+
+    */
+
+
+}
