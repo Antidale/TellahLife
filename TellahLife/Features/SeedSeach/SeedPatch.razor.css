@@ -1,0 +1,8 @@
+   .seed-background {
+       background-color: #537b88;
+   }
+
+   .seed-iframe {
+       min-width: fit-content;
+       min-height: fit-content;
+   }

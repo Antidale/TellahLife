@@ -1,0 +1,52 @@
+﻿@using FeInfo.Common.DTOs
+@using System.Runtime.CompilerServices
+@using TellahLife.Constants
+@using TellahLife.Models
+@using TellahLife.Services
+@inherits AppStateBase
+@inject IFeApiDataService dataService
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public HashSet<SeedDetail> Seeds { get; private set; } = new();
+    private Dictionary<int, string> SeedHtml { get; set; } = new Dictionary<int, string>();
+
+    //TODO: add parameters to this so that the search page can call it with those
+    public async Task FetchSeeds(string binaryFlags = "", string flagName = "", string seedValue = "")
+    {
+        var seeds = await dataService.GetSeedsAsync(binaryFlags: binaryFlags, flagName: flagName, seedValue: seedValue);
+        Seeds = seeds.ToHashSet();
+        StateHasChanged();
+    }
+
+    public async Task<string> FetchSeedHtml(int id)
+    {
+
+        SeedHtml.TryGetValue(id, out var html);
+
+        if (!string.IsNullOrEmpty(html))
+            return html;
+
+        try
+        {
+            html = await dataService.GetSeedHtmlAsync(id);
+
+            if (!string.IsNullOrEmpty(html))
+            {
+                SeedHtml.TryAdd(id, html);
+            }
+        }
+        catch
+        {
+            //
+        }
+
+        return html ?? string.Empty;
+    }
+}

@@ -1,0 +1,37 @@
+﻿@if (AppState.Seeds.Any())
+{
+    <QuickGrid Items="AppState.Seeds.AsQueryable()" Class="table table-striped">
+        @* <PropertyColumn Property="@(s => s.Flagset)"  /> *@
+        <TemplateColumn>
+            <details>
+                <br />
+                <div class="test">
+                    @context.Flagset
+                </div>
+
+                <summary>Show Flags</summary>
+            </details>
+        </TemplateColumn>
+        <TemplateColumn>
+            <a href="/seeds/@context.SeedId">Permalink</a>
+        </TemplateColumn>
+        <PropertyColumn Property="@(s => s.Seed)" />
+        <PropertyColumn Property="@(s => s.Verification)" />
+    </QuickGrid>
+}
+
+@code {
+
+    [CascadingParameter]
+    public SeedSearchAppState AppState { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AppState.Seeds.Any())
+        {
+            await AppState.FetchSeeds();
+        }
+    }
+
+    //TODO: figure out how to display the list of returned seeds well, especially the flags
+}
