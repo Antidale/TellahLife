@@ -1,8 +1,11 @@
-﻿<TournamentAppState>
-    <Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(Pages.NotFound)">
-        <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-        </Found>
-    </Router>
+﻿@using TellahLife.Features.SeedSeach
+<TournamentAppState>
+    <SeedSearchAppState>
+        <Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+            <Found Context="routeData">
+                <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+        </Router>
+    </SeedSearchAppState>
 </TournamentAppState>

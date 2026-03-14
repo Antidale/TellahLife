@@ -1,0 +1,32 @@
+﻿@page "/seeds/{id:int}"
+
+<article class="mx-auto seed-background">
+    @if (string.IsNullOrEmpty(patchPage))
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <iframe srcdoc="@patchPage" referrerpolicy="strict-origin-when-cross-origin" class="seed-iframe" width="100%vw"
+                height="600" />
+    }
+</article>
+
+@code {
+    [CascadingParameter]
+    public required SeedSearchAppState AppState { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private string patchPage = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var response = await AppState.FetchSeedHtml(Id);
+        patchPage = string.IsNullOrWhiteSpace(response)
+            ? "<p class='seed-background mx-auto'>not found</p>"
+            : response;
+
+    }
+}
