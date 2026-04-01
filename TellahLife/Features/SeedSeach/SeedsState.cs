@@ -1,4 +1,4 @@
-using TellahLife.Models;
+using FeInfo.Common.DTOs;
 using TellahLife.Services;
 
 namespace TellahLife.Features.SeedSeach;
