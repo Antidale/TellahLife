@@ -6,3 +6,8 @@
        min-width: fit-content;
        min-height: fit-content;
    }
+
+   h2,
+   h3 {
+       text-align: center;
+   }

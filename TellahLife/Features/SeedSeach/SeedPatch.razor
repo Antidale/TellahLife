@@ -1,5 +1,6 @@
 ﻿@page "/seeds/{id:int}"
 
+<h2 class="mx-auto">Archived Patch</h2>
 <article class="mx-auto seed-background">
     @if (string.IsNullOrEmpty(patchPage))
     {
@@ -7,8 +8,9 @@
     }
     else
     {
+        
         <iframe srcdoc="@patchPage" referrerpolicy="strict-origin-when-cross-origin" class="seed-iframe" width="100%vw"
-                height="600" />
+                height="700" />
     }
 </article>
 
@@ -24,9 +26,9 @@
     protected override async Task OnParametersSetAsync()
     {
         var response = await AppState.FetchSeedHtml(Id);
+        
         patchPage = string.IsNullOrWhiteSpace(response)
-            ? "<p class='seed-background mx-auto'>not found</p>"
+            ? "<h3>patch not found</h3>"
             : response;
-
     }
 }

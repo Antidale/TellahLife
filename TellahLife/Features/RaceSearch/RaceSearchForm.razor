@@ -1,8 +1,34 @@
-﻿<h2>Search Panel</h2>
+﻿@using TellahLife.Models
+@using System.Web
+@inject NavigationManager NavigationManager
+
+<h2>Search Panel</h2>
 <div class="input-group row">
-    <label class="form-label" for="descriptionInput"></label>
+    <label class="form-label" for="descriptionInput">
+        Description:
+        <input type="text" id="descriptionInput" class="input form-control" placeholder="Race Description"
+               @bind-value="@Data.Description" />
+    </label>
+
+    <label class="form-label" for="flagsetInput">
+        Flagset:
+        <input type="text" id="flagsetInput" class="input form-control" placeholder="A flag or the full flagset"
+               @bind-value="@Data.Flagset" />
+    </label>
+
+    <button @onclick=@(() => HandleSearchClick()) class="btn btn-primary col-2 mx-3 my-2">Search</button>
 </div>
 
 @code {
 
+    [Parameter]
+    public RaceSearchData Data { get; set; }
+
+    [Parameter]
+    public EventCallback<RaceSearchData> OnSearchClick { get; set; }
+
+    public async Task HandleSearchClick()
+    {
+        await OnSearchClick.InvokeAsync(Data);
+    }
 }
