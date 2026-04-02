@@ -1,5 +1,33 @@
-﻿<h3>RaceList</h3>
+﻿@if (Races.Any())
+{
+    <QuickGrid Items="Races.AsQueryable()" Class="table table-striped">
+        <PropertyColumn Property="@(r => r.RoomName)" />
+        
+        <TemplateColumn Title="Description">
+            @if (@context.Metadata.TryGetValue("Description", out var description))
+            {
+                @description
+            }
+            else if (@context.Metadata.TryGetValue("Goal", out var goal))
+            {
+                @goal
+            }
+            
+        </TemplateColumn>
+        <TemplateColumn Title="Racetime Link">
+            <a href="https://racetime.gg/ff4fe/@context.RoomName">Racetime Link</a>
+        </TemplateColumn>
+        <TemplateColumn Title="Seed Link">
+            @if (@context.SeedId is not null)
+            {
+                <a href="/seeds/@context.SeedId">Permalink</a>
+            }
+        </TemplateColumn>
+    </QuickGrid>
+}
+
 
 @code {
-
+    [Parameter]
+    public IEnumerable<RaceDetail> Races { get; set; } = [];
 }

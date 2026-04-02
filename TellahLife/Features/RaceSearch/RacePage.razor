@@ -1,9 +1,49 @@
 ﻿@page "/races"
-<PageTitle>Race Search</PageTitle>
-<RaceSearchForm />
+@using TellahLife.Models
+@inject IRaceState RaceState
+@inject NavigationManager NavigationManager
 
-<RaceList />
+<PageTitle>Race Listing</PageTitle>
+<RaceSearchForm Data="@RaceSearchData" OnSearchClick="HandleSearchClick" />
+
+<RaceList Races="Races" />
 
 @code {
+    List<RaceDetail> Races => RaceState.Races
+                                .Where(x =>
+                                    x.Metadata["Description"].Contains(Description ?? "") &&
+                                    x.Flagset.Contains(Flagset ?? ""))
+                                .ToList();
+    [SupplyParameterFromQuery(Name = "description")]
+    string? Description { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "flagset")]
+    string? Flagset { get; set; } = string.Empty;
+
+    RaceSearchData RaceSearchData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!RaceState.Races.Any())
+        {
+            await RaceState.GetRaces();
+        }
+
+        RaceSearchData = new()
+        {
+            Description = Description ?? "",
+            Flagset = Flagset ?? ""
+        };
+    }
+
+    private async Task HandleSearchClick(RaceSearchData data)
+    {
+        Flagset = data.Flagset;
+        Description = data.Description;
+        await RaceState.GetRaces(Flagset ?? "", Description ?? "");
+        StateHasChanged();
+    }
+
+
 
 }
