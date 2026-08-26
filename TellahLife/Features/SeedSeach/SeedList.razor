@@ -1,16 +1,22 @@
 ﻿@if (AppState.Seeds.Any())
 {
     <QuickGrid Items="AppState.Seeds.AsQueryable()" Class="table table-striped">
-        @* <PropertyColumn Property="@(s => s.Flagset)"  /> *@
-        <TemplateColumn>
-            <details>
-                <br />
-                <div class="test">
-                    @context.Flagset
-                </div>
-
-                <summary>Show Flags</summary>
-            </details>
+        @* TODO: at some point, figure out why styling isn't working as expected here *@
+        <TemplateColumn Title="Flags">
+            @if (context.Flagset.Length <= 800)
+            {
+                @context.Flagset
+            }
+            else
+            {
+                <details>
+                    <br />
+                    <div>
+                        @context.Flagset
+                    </div>
+                    <summary>Show Flags</summary>
+                </details>
+            }
         </TemplateColumn>
         <TemplateColumn>
             <a href="/seeds/@context.SeedId">Permalink</a>
