@@ -1,7 +1,4 @@
 ﻿@using FeInfo.Common.DTOs
-@using System.Runtime.CompilerServices
-@using TellahLife.Constants
-@using TellahLife.Models
 @using TellahLife.Services
 @inherits AppStateBase
 @inject IFeApiDataService dataService
@@ -35,7 +32,7 @@
 
         try
         {
-            html = await dataService.GetSeedHtmlAsync(id);
+            html = await dataService.GetSeedHtmlAsync(id).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(html))
             {
@@ -44,7 +41,7 @@
         }
         catch
         {
-            //
+            //TODO: determine how exceptions should get handled. Toast? error in place of patch page?
         }
 
         return html ?? string.Empty;

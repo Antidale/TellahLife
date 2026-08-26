@@ -9,7 +9,7 @@
         <input type="text" id="descriptionInput" class="input form-control" placeholder="Race Description"
                @bind-value="@Data.Description" />
     </label>
-    @* 
+    @*
     <label class="form-label" for="flagsetInput">
         Flagset:
         <input type="text" id="flagsetInput" class="input form-control" placeholder="A flag or the full flagset"
@@ -22,7 +22,7 @@
 @code {
 
     [Parameter]
-    public RaceSearchData Data { get; set; }
+    public required RaceSearchData Data { get; set; }
 
     [Parameter]
     public EventCallback<RaceSearchData> OnSearchClick { get; set; }

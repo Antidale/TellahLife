@@ -14,4 +14,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped<IFeApiDataService, FeApiDataService>();
 builder.Services.AddScoped<IRaceState, RaceState>();
 
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
 await builder.Build().RunAsync();
+#pragma warning restore CA2007 // Consider calling ConfigureAwait on the awaited task

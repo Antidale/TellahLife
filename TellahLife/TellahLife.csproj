@@ -5,6 +5,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+    <AnalysisModeSecurity>all</AnalysisModeSecurity>
+    <AnalysisModePerformance>all</AnalysisModePerformance>
+    <AnalysisModeReliability>all</AnalysisModeReliability>
+    <AnalysisModeUsage>all</AnalysisModeUsage>
   </PropertyGroup>
 
   <ItemGroup>

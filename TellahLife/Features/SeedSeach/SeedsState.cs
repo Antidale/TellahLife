@@ -10,7 +10,7 @@ public class SeedsState(IFeApiDataService dataService)
 
     public async Task GetSeeds(string binaryFlags = "", string flagName = "", string seedValue = "")
     {
-        var seeds = await dataService.GetSeedsAsync(binaryFlags: binaryFlags, flagName: flagName, seedValue: seedValue);
+        var seeds = await dataService.GetSeedsAsync(binaryFlags: binaryFlags, flagName: flagName, seedValue: seedValue).ConfigureAwait(false);
         foreach (var seed in seeds)
         {
             Seeds.Add(seed);
@@ -21,17 +21,12 @@ public class SeedsState(IFeApiDataService dataService)
     {
         if (!Seeds.Any(x => x.SeedId == id))
         {
-            var seed = await dataService.GetSeedByIdAsync(id);
+            var seed = await dataService.GetSeedByIdAsync(id).ConfigureAwait(false);
 
             if (seed is not null)
                 Seeds.Add(seed);
             else
                 return string.Empty;
-        }
-
-        if (_seedHtml.ContainsKey(id))
-        {
-            return _seedHtml[id];
         }
 
         _seedHtml.TryGetValue(id, out var html);
@@ -41,7 +36,7 @@ public class SeedsState(IFeApiDataService dataService)
 
         try
         {
-            html = await dataService.GetSeedHtmlAsync(id);
+            html = await dataService.GetSeedHtmlAsync(id).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(html))
             {

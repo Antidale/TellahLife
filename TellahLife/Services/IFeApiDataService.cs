@@ -21,7 +21,7 @@ public class FeApiDataService(HttpClient httpClient) : IFeApiDataService
     {
         try
         {
-            return await httpClient.GetFromJsonAsync<List<TournamentSummary>>($"{EndpointConstants.API_BASE_ADDRESS}/Tournament") ?? [];
+            return await httpClient.GetFromJsonAsync<List<TournamentSummary>>($"{EndpointConstants.API_BASE_ADDRESS}/Tournament").ConfigureAwait(false) ?? [];
         }
         catch
         {
@@ -33,7 +33,7 @@ public class FeApiDataService(HttpClient httpClient) : IFeApiDataService
     {
         try
         {
-            return await httpClient.GetStringAsync($"{EndpointConstants.API_BASE_ADDRESS}/seed/{id}/html");
+            return await httpClient.GetStringAsync(new Uri($"{EndpointConstants.API_BASE_ADDRESS}/seed/{id}/html")).ConfigureAwait(false);
         }
         catch
         {
@@ -53,7 +53,7 @@ public class FeApiDataService(HttpClient httpClient) : IFeApiDataService
             query["onlySavedHtml"] = "true";
             builder.Query = query.ToString();
             var uriString = builder.ToString();
-            return await httpClient.GetFromJsonAsync<List<SeedDetail>>(uriString) ?? [];
+            return await httpClient.GetFromJsonAsync<List<SeedDetail>>(uriString).ConfigureAwait(ConfigureAwaitOptions.None) ?? [];
         }
         catch
         {
@@ -66,7 +66,7 @@ public class FeApiDataService(HttpClient httpClient) : IFeApiDataService
     {
         try
         {
-            return await httpClient.GetFromJsonAsync<SeedDetail>($"{EndpointConstants.API_BASE_ADDRESS}/seed/{id}");
+            return await httpClient.GetFromJsonAsync<SeedDetail>($"{EndpointConstants.API_BASE_ADDRESS}/seed/{id}").ConfigureAwait(ConfigureAwaitOptions.None);
         }
         catch
         {
@@ -78,7 +78,7 @@ public class FeApiDataService(HttpClient httpClient) : IFeApiDataService
     {
         try
         {
-            return await httpClient.GetFromJsonAsync<List<TournamentRegistrant>>($"{EndpointConstants.API_BASE_ADDRESS}/Tournament/{id}/registrants") ?? [];
+            return await httpClient.GetFromJsonAsync<List<TournamentRegistrant>>($"{EndpointConstants.API_BASE_ADDRESS}/Tournament/{id}/registrants").ConfigureAwait(ConfigureAwaitOptions.None) ?? [];
         }
         catch
         {
@@ -100,7 +100,7 @@ public class FeApiDataService(HttpClient httpClient) : IFeApiDataService
 
             builder.Query = query.ToString();
             var uriString = builder.ToString();
-            return await httpClient.GetFromJsonAsync<IEnumerable<RaceDetail>>(uriString) ?? [];
+            return await httpClient.GetFromJsonAsync<IEnumerable<RaceDetail>>(uriString).ConfigureAwait(ConfigureAwaitOptions.None) ?? [];
         }
         catch
         {
